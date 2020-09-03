@@ -1,0 +1,15 @@
+- colored text in Explorer Screen and Statistic;
+- removing color categorey from Add new Color pop-up;
+- fixing adding a new keyword, when filtered, leads to a low-number PID;
+- window size can be changed;
+- fixed adding new category data in wrong column; 
+- fixed Add keyword to an existing category...
+- !please press ENTER key to calculate the "world globe" or any other product. 
+remaining:
+- fixed If opening ‘Colors’ after Loading %s Table, Program Freezes;
+
+remaining:
+- To TEST >> Add ‘Match Type’ as a visible editable column in Colors table. (Now, no visibility into choices)
+- can you please replicate the bug and inform me about the steps to see the case? It was instant but i reshaped the algorithm based on the 6 algorithm state changes ("Contains", "Doest not contain", "empty", " ...)etc;
+- It's a bit of work into that because i need to change the cron job and some stuff, i'll do this in the next v7.0 >> Add Category-Matching Formatting (Background + Text) Into Data Tables, For Easier Reading
+
