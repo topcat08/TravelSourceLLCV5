@@ -57,7 +57,7 @@ public class Statistica {
                 double d = 0.0;
                 if (colors.get(i).categories != null) {
                     if (!listModel.contains(colors.get(i).categories)) {
-                        HashMap<String, Double> eval = getKeywordSumV3(productsList.get(z), colors.get(i).categoryCondition);
+                        HashMap<String, Double> eval = getKeywordSumV3(productsList.get(z), colors.get(i).getCategoryCondition());
                         listModel.addElement(colors.get(i).categories);
                         for (HashMap.Entry<String, Double> m : eval.entrySet()) {
                             if (m.getKey().equals(colors.get(i).categories)) {
@@ -149,7 +149,7 @@ public class Statistica {
                 screen.Colourful data = new screen.Colourful();
                 data.idKeywordTable = rsd.getInt("idColor");
                 data.categories = rsd.getString("Category");
-                data.color = rsd.getString("Color");
+                data.color = rsd.getString("HexColor");
                 data.hex = rsd.getString("HexColor");
                 data.textHex = rsd.getString("TextColor");
                 data.keyword = rsd.getString("keyword");
@@ -275,6 +275,10 @@ public class Statistica {
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        final JScrollPane scrollPane2 = new JScrollPane();
+        panel1.add(scrollPane2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        table2 = new JTable();
+        scrollPane2.setViewportView(table2);
     }
 
     /**

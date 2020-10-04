@@ -124,7 +124,7 @@ public class ColorViewer {
                     ArrayList<String> t = new ArrayList<>();
                     for (screen.Colourful c : colors) {
                         t.add(c.keyword);
-                        if (containss((String) value, c.keyword, c.categoryCondition)) {
+                        if (containss((String) value, c.keyword, c.getCategoryCondition())) {
                             Color dd = null;
                             Color cx = null;
                             switch (column) {

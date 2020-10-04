@@ -13,7 +13,16 @@ public class Colourful {
     public String color;
     public String hex;
     public String keyword;
-    public String categoryCondition="";
+    private String categoryCondition;
+
+
+    public String getCategoryCondition() {
+        return categoryCondition;
+    }
+
+    public void setCategoryCondition(String categoryCondition) {
+        this.categoryCondition=categoryCondition;
+    }
 
     public String getCategories() {
         return categories;

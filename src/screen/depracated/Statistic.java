@@ -114,7 +114,7 @@ public class Statistic {
 
     private void loadRightListCategories() {
         listModel = new DefaultListModel<>();
-        ArrayList<Colourful> categoriesColors = new ArrayList<>();
+        ArrayList<screen.Colourful> categoriesColors = new ArrayList<>();
         for (int i = 0; i < colors.size(); i++) {
             if (colors.get(i).categories != null) {
                 if (!listModel.contains(colors.get(i).categories)) {
@@ -209,7 +209,7 @@ public class Statistic {
 
 
     private String getColorName(String keyword) {
-        for (Colourful c : colors) {
+        for (screen.Colourful c : colors) {
             if (keyword.equalsIgnoreCase(c.keyword) || keyword.contains(c.keyword)) {
                 return c.color;
             }
@@ -366,7 +366,7 @@ public class Statistic {
         try {
             rsd = getStatement().executeQuery(sql);
             while (rsd.next()) {
-                Colourful data = new Colourful();
+                screen.Colourful data = new screen.Colourful();
                 data.idKeywordTable = rsd.getInt("idColor");
                 data.categories = rsd.getString("Category");
                 data.color = rsd.getString("Color");
@@ -417,7 +417,7 @@ public class Statistic {
                 JComponent component = (JComponent) super.prepareRenderer(
                         renderer, rowIndex, columnIndex);
 
-                Keywords k = new Keywords();
+                screen.Keywords k = new screen.Keywords();
                 switch (columnIndex) {
                     case 1:
                         k.setKeyword_1(getValueAt(rowIndex, columnIndex).toString());
@@ -666,11 +666,11 @@ public class Statistic {
         return map;
     }
 
-    private void loadDatabase() {
-        if (REMOTE_DBC) {
+    public static void loadDatabase() {
+        if (Explorer.REMOTE_DBC) {
             try {
-                DBUtilsConection.doSshTunnel(strSshUser, strSshPassword, strSshHost, nSshPort,
-                        strRemoteHost, nLocalPort, nRemotePort);
+                screen.DBUtilsConection.doSshTunnel(Explorer.strSshUser, Explorer.strSshPassword, Explorer.strSshHost, Explorer.nSshPort,
+                        Explorer.strRemoteHost, Explorer.nLocalPort, Explorer.nRemotePort);
             } catch (JSchException e1) {
                 e1.printStackTrace();
             }
@@ -680,26 +680,62 @@ public class Statistic {
                 e1.printStackTrace();
             }
             try {
-                con = DriverManager
-                        .getConnection("jdbc:mysql://localhost:" + nLocalPort
-                                + "/TravelSourceLLC", strDbUser, strDbPassword);
+                Explorer.con = DriverManager
+                        .getConnection("jdbc:mysql://localhost:" + Explorer.nLocalPort
+                                + "/TravelSourceLLC", Explorer.strDbUser, Explorer.strDbPassword);
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
         } else {
             try { // local port number use to bind SSH tunnel
                 String strDbUser = "root"; // database loging username
-                String strDbPassword = "Samsung23@!"; // database login
+                String strDbPassword = "new-password"; // database login
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                nLocalPort = 3306;
-                con = DriverManager.getConnection(
-                        "jdbc:mysql://localhost:" + nLocalPort + "/TravelSourceLLC", strDbUser,
+                Explorer.nLocalPort = 3306;
+                Explorer.con = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:" + Explorer.nLocalPort + "/TravelSourceLLC?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", strDbUser,
                         strDbPassword);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+//
+//    private void loadDatabase() {
+//        if (REMOTE_DBC) {
+//            try {
+//                DBUtilsConection.doSshTunnel(strSshUser, strSshPassword, strSshHost, nSshPort,
+//                        strRemoteHost, nLocalPort, nRemotePort);
+//            } catch (JSchException e1) {
+//                e1.printStackTrace();
+//            }
+//            try {
+//                Class.forName("com.mysql.cj.jdbc.Driver");
+//            } catch (ClassNotFoundException e1) {
+//                e1.printStackTrace();
+//            }
+//            try {
+//                con = DriverManager
+//                        .getConnection("jdbc:mysql://localhost:" + nLocalPort
+//                                + "/TravelSourceLLC", strDbUser, strDbPassword);
+//            } catch (SQLException e1) {
+//                e1.printStackTrace();
+//            }
+//        } else {
+//            try { // local port number use to bind SSH tunnel
+//                String strDbUser = "root"; // database loging username
+//                String strDbPassword = "Samsung23@!"; // database login
+//                Class.forName("com.mysql.cj.jdbc.Driver");
+//                nLocalPort = 3306;
+//                con = DriverManager.getConnection(
+//                        "jdbc:mysql://localhost:" + nLocalPort + "/TravelSourceLLC", strDbUser,
+//                        strDbPassword);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     private void editTableUpdate() {
         table1.getModel().addTableModelListener(new TableModelListener() {
@@ -759,7 +795,7 @@ public class Statistic {
     }
 
     String filtered = "";
-    List<Keywords> calculations;
+    List<screen.Keywords> calculations;
     List<String> mySpreadSheets = new ArrayList<String>();
 
     private void filterByCategory() {
@@ -773,8 +809,8 @@ public class Statistic {
         } catch (SQLException e1) {
             e1.printStackTrace();
         }
-        StringSearchable searchable = new StringSearchable(mySpreadSheets);
-        comboBox1 = new AutocompleteJComboBox(searchable);
+        screen.StringSearchable searchable = new screen.StringSearchable(mySpreadSheets);
+        comboBox1 = new screen.AutocompleteJComboBox(searchable);
         comboBox1.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -800,7 +836,7 @@ public class Statistic {
 ////                                list1.setModel(listModel);
 //                                list1.revalidate();
                                 listModel = new DefaultListModel<>();
-                                ArrayList<Colourful> categoriesColors = new ArrayList<>();
+                                ArrayList<screen.Colourful> categoriesColors = new ArrayList<>();
                                 HashMap<String, Double> eval = getKeywordSumV3(filtered);
                                 for (int i = 0; i < colors.size(); i++) {
                                     if (colors.get(i).categories != null) {
@@ -893,10 +929,10 @@ public class Statistic {
     }
 
     public class ColorRenderer extends DefaultListCellRenderer {
-        ArrayList<Colourful> values = new ArrayList<>();
+        ArrayList<screen.Colourful> values = new ArrayList<>();
         double totalSum = 0.0;
 
-        public ColorRenderer(ArrayList<Colourful> values) {
+        public ColorRenderer(ArrayList<screen.Colourful> values) {
             this.values = values;
             setOpaque(true);
             this.totalSum = getTotalSum(filtered);

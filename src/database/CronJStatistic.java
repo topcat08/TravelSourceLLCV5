@@ -320,7 +320,7 @@ public class CronJStatistic {
                 Colourful data = new Colourful();
                 data.idKeywordTable = rsd.getInt("idColor");
                 data.categories = rsd.getString("Category");
-                data.color = rsd.getString("Color");
+                data.color = rsd.getString("HexColor");
                 data.hex = rsd.getString("HexColor");
                 data.textHex = rsd.getString("TextColor");
                 data.keyword = rsd.getString("keyword");

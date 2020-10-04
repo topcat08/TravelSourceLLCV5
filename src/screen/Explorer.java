@@ -22,7 +22,7 @@ public class Explorer {
     TableRowSorter<DefaultTableModel> sorter = null;
     String columnNames[] = null;
     public static boolean REMOTE_DBC = true;
-    private static final int LIMIT = 100;
+    private static final int LIMIT = 1000000;
     static DefaultTableModel model = null;
     static double totalSumF1 = 0.0;
     private JTable table1;
@@ -49,11 +49,11 @@ public class Explorer {
     static int nLocalPort = 3366; // local port number use to bind SSH tunnel
     Statement statement = null;
     DefaultListModel<String> listModel = null;
-    private static String loadStatistic = "Select * from Statistica";
+    private static String loadStatistic = "Select * from TravelSourceLLC.Statistica";
     private String deleteById = "DELETE FROM `TravelSourceLLC`.`KeywordExpanded` WHERE `idKeywordExpanded`='";
     String loadDataWithSchedueleRightNow = "select sum(frequency_1)+ sum(frequency_2)+sum(frequency_3)+sum(frequency_4) as value from TravelSourceLLC.KeywordExpanded";
-    String loadDataWithSchedueleRightNowTwo = "SELECT * FROM KeywordExpanded limit " + LIMIT; //this is my demo test mode
-    String loadColours = "Select * from Color";
+    String loadDataWithSchedueleRightNowTwo = "SELECT * FROM KeywordExpanded group by keyword_1, keyword_2, keyword_3, keyword_4 order by idKeywordExpanded limit " + LIMIT; //this is my demo test mode
+    String loadColours = "Select * from TravelSourceLLC.Color";
     private String getTotalSum = "SELECT sum(frequency_1+frequency_2+frequency_3+frequency_4) as u FROM TravelSourceLLC.KeywordExpanded where title_category='";
     String checkIfKeywordHasCondition = "select keyword from TravelSourceLLC.Color";
     String getKeywordSumV3 = "select distinct idKeywordExpanded, t2.Category ,keyword_1,keyword_2,keyword_3,keyword_4," +
@@ -91,11 +91,7 @@ public class Explorer {
                         }
                     }
                 });
-        new Thread() {
-            public void run() {
-                loadProduct("");
-            }
-        }.start();
+
     }
 
     ArrayList<String> productNames = new ArrayList<>();
@@ -110,28 +106,29 @@ public class Explorer {
             //find out the values for a specific product
             productNames = new ArrayList<>();
             while (rs.next()) {
+//                System.out.println("database has products ");
+//                System.out.println("columnCount has  " + columnCount);
                 for (int c = 1; c < columnCount; c++) {
-                    if (rs.getString(2).equals(productN)) {
-                        try {
-                            if (c > 2) {
-                                freq.add(rs.getDouble(c));
-                                productNames.add(meta.getColumnLabel(c));
-                                fRes.addElement(meta.getColumnLabel(c));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            freq.add(0.0);
+                    //  if (rs.getString(2).equals(productN)) {
+                    if (c > 2) {
+                        if (!productNames.contains(meta.getColumnLabel(c))) {
+                            freq.add(rs.getDouble(c));
                             productNames.add(meta.getColumnLabel(c));
+                            fRes.addElement(meta.getColumnLabel(c));
                         }
                     }
+                    //   freq.add(0.0);
+                    // productNames.add(meta.getColumnLabel(c));
+                    // }
                 }
             }
+            // System.out.println("product size is " + productNames.size());
             freq.add(0.0);
             productNames.add("New Category");
             fRes.addElement("New Category");
 
             list1.setModel(fRes);
-            list1.setCellRenderer(new ColorRenderer(freq, productNames));
+            list1.setCellRenderer(new ColorRenderer(freq, productNames, keywordModels));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -175,7 +172,7 @@ public class Explorer {
             public void actionPerformed(ActionEvent arg0) {
                 JFrame frame = new JFrame("ColorViewer");
                 //frame.setContentPane(new ColorViewer(table1).panel);
-                frame.setContentPane(new ColorViewer(table1).panel);
+                frame.setContentPane(new EmptyColorViewer().panel);
                 frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
                 frame.setResizable(true);
                 frame.pack();
@@ -187,7 +184,7 @@ public class Explorer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame frame = new JFrame("Statstics");
-                frame.setContentPane(new Statistica().panel1);
+                frame.setContentPane(new EmptyStatistica().$$$getRootComponent$$$());
                 frame.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
                 frame.setResizable(true);
                 frame.pack();
@@ -208,7 +205,7 @@ public class Explorer {
                     m.removeRow(table1.getSelectedRow());
                     table1.revalidate();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+//                    System.out.println(e.getMessage());
                 }
             }
         });
@@ -275,7 +272,7 @@ public class Explorer {
                 data.hex = rsd.getString("HexColor");
                 data.textHex = rsd.getString("TextColor");
                 data.keyword = rsd.getString("keyword");
-                data.categoryCondition = rsd.getString("CategoryCondition");
+                data.setCategoryCondition(rsd.getString("CategoryCondition"));
                 colors.add(data);
             }
         } catch (SQLException e) {
@@ -283,7 +280,100 @@ public class Explorer {
         }
     }
 
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        panel1 = new JPanel();
+        panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setBackground(new Color(-2848));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(2, 6, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        colorButton = new JButton();
+        colorButton.setText("Colors");
+        panel2.add(colorButton, new com.intellij.uiDesigner.core.GridConstraints(1, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        keywordFilter = new JTextField();
+        keywordFilter.setToolTipText("KKKKK");
+        panel2.add(keywordFilter, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
+        panel2.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 1, false));
+        deleteIdButton = new JButton();
+        deleteIdButton.setText("Delete");
+        panel2.add(deleteIdButton, new com.intellij.uiDesigner.core.GridConstraints(1, 4, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        add = new JButton();
+        add.setText("Add");
+        panel2.add(add, new com.intellij.uiDesigner.core.GridConstraints(1, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        comboBox1.setAutoscrolls(true);
+        comboBox1.setEditable(true);
+        comboBox1.setFocusCycleRoot(true);
+        comboBox1.setMaximumRowCount(30);
+        panel2.add(comboBox1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        statsButton = new JButton();
+        statsButton.setText("Stats");
+        panel2.add(statsButton, new com.intellij.uiDesigner.core.GridConstraints(1, 5, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scrollPane1 = new JScrollPane();
+        scrollPane1.setHorizontalScrollBarPolicy(32);
+        scrollPane1.setVerticalScrollBarPolicy(22);
+        panel1.add(scrollPane1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 3, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        table1.setAutoResizeMode(0);
+        scrollPane1.setViewportView(table1);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        panel1.add(scrollPane2, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(180, -1), new Dimension(180, -1), new Dimension(200, -1), 0, false));
+        list1 = new JList();
+        list1.setBackground(new Color(-8591));
+        final DefaultListModel defaultListModel1 = new DefaultListModel();
+        list1.setModel(defaultListModel1);
+        scrollPane2.setViewportView(list1);
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return panel1;
+    }
+
+    class KeywordModel {
+        int id;
+        String keyword_1, keyword_2, keyword_3, keyword_4;
+        double frequency_1, frequency_2, frequency_3, frequency_4;
+        String title_category = "";
+        //        String what_category = "";
+        String what_category_1 = "";
+        String what_category_2 = "";
+        String what_category_3 = "";
+        String what_category_4 = "";
+
+        //        double total_sum = 0.0;
+        int column = 0;
+
+//        public void setWhat_category(String what_category) {
+//            this.what_category = what_category;
+//        }
+//
+//        public String getWhat_category() {
+//            return what_category;
+//        }
+////
+//        public double getTotalSum() {
+//            return total_sum;
+//        }
+
+//        public void setTotal_sum(double total_sum) {
+//            this.total_sum = total_sum;
+//        }
+    }
+
+    ArrayList<KeywordModel> keywordModels;
+
     private void createUIComponents() {
+        keywordModels = new ArrayList<KeywordModel>();
         setupTableColours();
         loadDatabase();
         table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -291,7 +381,7 @@ public class Explorer {
                 "Keyword 1", "#F1", "Keyword 2", "#F2",
                 "Keyword 3", "#F3", "Keyword 4", "#F4",
                 "Product"
-                , "Avg. rate"
+                , " "
         }, 0) {
             @Override
             public Class getColumnClass(int columnIndex) {
@@ -365,6 +455,18 @@ public class Explorer {
                     }
                 }
                 model.addRow(new Object[]{index, d, (int) e, f, (int) g, h, (int) i, j, (int) k, l, " "});
+                KeywordModel m = new KeywordModel();
+                m.id = index;
+                m.keyword_1 = d;
+                m.frequency_1 = e;
+                m.keyword_2 = f;
+                m.frequency_2 = g;
+                m.keyword_3 = h;
+                m.frequency_3 = i;
+                m.keyword_4 = j;
+                m.frequency_4 = k;
+                m.title_category = l;
+                keywordModels.add(m);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -392,93 +494,13 @@ public class Explorer {
 
         editTableUpdate();
         filterByCategory();
-        //maa
-//        scrollPane1.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-//            @Override
-//            public void adjustmentValueChanged(AdjustmentEvent adjustmentEvent) {
-//                System.out.println("t" + adjustmentEvent.getValue());
-//                model = new DefaultTableModel(new String[]{"#",
-//                        "Keyword 1", "#F1", "Keyword 2", "#F2",
-//                        "Keyword 3", "#F3", "Keyword 4", "#F4",
-//                        "Product"
-//                        , "Avg. rate"
-//                }, 0) {
-//                    @Override
-//                    public Class getColumnClass(int columnIndex) {
-//                        switch (columnIndex) {
-//                            case 0:
-//                                return Integer.class;
-//                            case 2:
-//                                return Integer.class;
-//                            case 4:
-//                                return Integer.class;
-//                            case 6:
-//                                return Integer.class;
-//                            case 8:
-//                                return Integer.class;
-//                            default:
-//                                return String.class;
-//                        }
-//                    }
-//                };
-//                Statement st = null;
-////                loadColours();
-//                try {
-//                    st = con.createStatement();
-//                    ResultSet rs = st.executeQuery(loadDataWithSchedueleRightNow);
-////                    while (rs.next()) {
-////                        totalSumF1 = rs.getDouble("value");
-////                    }
-//
-//                    rs = st.executeQuery(loadDataWithSchedueleRightNowTwo );
-//                    ResultSetMetaData rsmd = rs.getMetaData();
-//                    int count = 1;
-//                    int columnCount = rsmd.getColumnCount();
-//                    columnNames = new String[columnCount];
-//                    while (count < columnCount) {
-//                        columnNames[count - 1] = rsmd.getColumnLabel(count);
-//                        count++;
-//                    }
-//                    rs.beforeFirst();
-//                    while (rs.next()) {
-//                        double e = 0.0;
-//                        double g = 0.0;
-//                        double i = 0.0;
-//                        double k = 0.0;
-//                        int index = rs.getInt("idKeywordExpanded");
-//                        String d = rs.getString("keyword_1");
-//                        String f = rs.getString("keyword_2");
-//                        String h = rs.getString("keyword_3");
-//                        String j = rs.getString("keyword_4");
-//                        String l = rs.getString("title_category");
-//                        try {
-//                            e = rs.getDouble("frequency_1");
-//                        } catch (NumberFormatException aa) {
-//                        } finally {
-//                            try {
-//                                g = rs.getDouble("frequency_2");
-//                            } catch (NumberFormatException bb) {
-//                            } finally {
-//                                try {
-//                                    i = rs.getDouble("frequency_3");
-//                                } catch (NumberFormatException cc) {
-//                                } finally {
-//                                    try {
-//                                        k = rs.getDouble("frequency_4");
-//                                    } catch (NumberFormatException ee) {
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        model.addRow(new Object[]{index, d, (int) e, f, (int) g, h, (int) i, j, (int) k, l, " "});
-//                    }
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//                table1.setModel(model);
-//
-//            }
-//        });
+
+        new Thread() {
+            public void run() {
+                loadProduct("");
+            }
+        }.start();
+
     }
 
     private void setupTableColours() {
@@ -508,68 +530,156 @@ public class Explorer {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                //  comp.setForeground(Color.BLUE);
                 comp.setForeground(Color.BLACK);
                 comp.setBackground(Color.WHITE);
-                try {
-                    String[] differences = ((String) value).split(" ");
-                    ArrayList<String> t = new ArrayList<>();
-                    for (Colourful c : colors) {
-                        t.add(c.keyword);
-                        if (containss((String) value, c.keyword, c.categoryCondition)) {
-                            Color cx = null;
-                            switch (column) {
-                                case 1:
-                                    try {
-                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
-                                        if (cx != null) comp.setForeground(cx);
-                                        Color dd2 = Color.decode("#" + getHexColorName((String) value));
-                                        if (dd2 != null) comp.setBackground(dd2);
-                                    } catch (Exception e) {
+
+                int id = (int) table.getModel().getValueAt(row, 0);
+                for (Colourful d : colors) {
+                    if (containss((String) value, d.keyword, d.getCategoryCondition())) {
+                        Color cx = null;
+                        switch (column) {
+                            case 1:
+                                for (KeywordModel m : keywordModels) {
+                                    if (m.id == id) {
+                                        m.column = 1;
+                                        m.what_category_1 = (d.categories);
                                     }
-                                    return comp;
-                                case 3:
-                                    try {
-                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
-                                        if (cx != null) comp.setForeground(cx);
-                                        Color dd2 = Color.decode("#" + getHexColorName((String) value));
-                                        if (dd2 != null) comp.setBackground(dd2);
-                                    } catch (Exception e) {
+                                }
+
+                                try {
+                                    cx = Color.decode("#" + getTextColorName(d.keyword)); //getTextColorName((String) value));
+                                    if (cx != null) comp.setForeground(cx);
+                                    Color dd2 = Color.decode("#" + getHexColorName(d.keyword));
+                                    if (dd2 != null) comp.setBackground(dd2);
+                                } catch (Exception e) {
+                                }
+                                return comp;
+                            case 3:
+                                for (KeywordModel m : keywordModels) {
+                                    if (m.id == id) {
+                                        int f = (int) table.getModel().getValueAt(row, 4);
+                                        m.column = 2;
+                                        m.what_category_2 = (d.categories);
                                     }
-                                    return comp;
-                                case 5:
-                                    try {
-                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
-                                        if (cx != null) comp.setForeground(cx);
-                                        Color dd2 = Color.decode("#" + getHexColorName((String) value));
-                                        if (dd2 != null) comp.setBackground(dd2);
-                                    } catch (Exception e) {
+                                }
+
+                                try {
+                                    cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+                                    if (cx != null) comp.setForeground(cx);
+                                    Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+                                    if (dd2 != null) comp.setBackground(dd2);
+                                } catch (Exception e) {
+                                }
+                                return comp;
+                            case 5:
+                                for (KeywordModel m : keywordModels) {
+                                    if (m.id == id) {
+                                        int f = (int) table.getModel().getValueAt(row, 6);
+                                        m.column = 3;
+                                        m.what_category_3 = (d.categories);
                                     }
-                                    return comp;
-                                case 7:
-                                    try {
-                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
-                                        if (cx != null) comp.setForeground(cx);
-                                        Color dd2 = Color.decode("#" + getHexColorName((String) value));
-                                        if (dd2 != null) comp.setBackground(dd2);
-                                    } catch (Exception e) {
+                                }
+
+                                try {
+                                    cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+                                    if (cx != null) comp.setForeground(cx);
+                                    Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+                                    if (dd2 != null) comp.setBackground(dd2);
+                                } catch (Exception e) {
+                                }
+                                return comp;
+                            case 7:
+
+                                for (KeywordModel m : keywordModels) {
+                                    if (m.id == id) {
+                                        m.column = 4;
+                                        m.what_category_4 = (d.categories);
                                     }
-                                    return comp;
-                                default:
-                                    comp.setForeground(Color.BLACK);
-                                    comp.setBackground(Color.WHITE);
-                                    return comp;
-                            }
+                                }
+
+                                try {
+                                    cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+                                    if (cx != null) comp.setForeground(cx);
+                                    Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+                                    if (dd2 != null) comp.setBackground(dd2);
+                                } catch (Exception e) {
+                                }
+                                return comp;
+                            default:
+                                comp.setForeground(Color.BLACK);
+                                comp.setBackground(Color.WHITE);
+                                return comp;
                         }
                     }
-                    return comp;
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
                 return comp;
             }
         });
         table1.setBackground(UIManager.getColor("Button.highlight"));
+    }
+
+    private void toCheckUp() {
+//        try {
+//            String[] differences = ((String) value).split(" ");
+//            ArrayList<String> t = new ArrayList<>();
+//            for (Colourful d : colors) {
+//                t.add(d.keyword);
+//                if (containss((String) value, d.keyword, d.getCategoryCondition())) {
+//                    Color cx = null;
+//                    System.out.println("loaded category condition is" + value + " - " + d.getCategoryCondition());
+//                    switch (column) {
+//                        case 1:
+//                            try {
+//                                cx = Color.decode("#" + getTextColorName(d.keyword)); //getTextColorName((String) value));
+//                                if (cx != null) comp.setForeground(cx);
+//                                Color dd2 = Color.decode("#" + getHexColorName(d.keyword));
+//                                if (dd2 != null) comp.setBackground(dd2);
+//                            } catch (Exception e) {
+//                            }
+//                            return comp;
+//                        case 3:
+//                            try {
+//                                cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+//                                if (cx != null) comp.setForeground(cx);
+//                                Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+//                                if (dd2 != null) comp.setBackground(dd2);
+//                            } catch (Exception e) {
+//                            }
+//                            return comp;
+//                        case 5:
+//                            try {
+//                                cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+//                                if (cx != null) comp.setForeground(cx);
+//                                Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+//                                if (dd2 != null) comp.setBackground(dd2);
+//                            } catch (Exception e) {
+//                            }
+//                            return comp;
+//                        case 7:
+//                            try {
+//                                cx = Color.decode("#" + getTextColorName((String) d.keyword)); //getTextColorName((String) value));
+//                                if (cx != null) comp.setForeground(cx);
+//                                Color dd2 = Color.decode("#" + getHexColorName((String) d.keyword));
+//                                if (dd2 != null) comp.setBackground(dd2);
+//                            } catch (Exception e) {
+//                            }
+//                            return comp;
+//                        default:
+//                            comp.setForeground(Color.BLACK);
+//                            comp.setBackground(Color.WHITE);
+//                            return comp;
+//                    }
+//                } else {
+//                    comp.setForeground(Color.BLACK);
+//                    comp.setBackground(Color.WHITE);
+//                    return comp;
+//
+//                }
+//            }
+//            return comp;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private double getTotalSum(String category) {
@@ -589,22 +699,27 @@ public class Explorer {
     public static boolean containss(String haystack, String needle, String categoryType) {
         haystack = haystack == null ? "" : haystack;
         needle = needle == null ? "" : needle;
-        int type = 0;
+        int type = -1;
+        if (categoryType.equals("Contains")) {
+            type = 0;
+        } else if (categoryType.equals("Does not contain")) {
+            type = 1;
+        } else if (categoryType.equals("Starts with")) {
+            type = 2;
+        } else if (categoryType.equals("Ends with")) {
+            type = 3;
+        } else if (categoryType.equals("Exactly")) {
+            type = 4;
+        }
+//        System.out.println("needle is " + needle);
         if (categoryType == null || categoryType.isEmpty() || categoryType.equals("null")) {
-            return true;
+            return false;
         }
-        if (categoryType.compareTo(InsertCategoryDialog.matchType[0]) == 0) {
-            return screen.TextMatcher.wordSituationMatchingMechanism(type, haystack, needle);
-        }
-        for (int i = 1; i < InsertCategoryDialog.matchType.length; i++) {
-            boolean d = screen.TextMatcher.wordSituationMatchingMechanism(i, haystack, needle);
-            if (d == true) return d;
-        }
+        if (type == -1) return false;
         return screen.TextMatcher.wordSituationMatchingMechanism(type, haystack, needle);
     }
 
     public static boolean containsKeyword(ArrayList<String> keywordPreconditions, String keyword, String type) {
-
         for (int x = 0; x < keywordPreconditions.size(); x++) {
             String dd = keywordPreconditions.get(x);
             if (containss(keyword, keywordPreconditions.get(x), type)) {
@@ -801,65 +916,6 @@ public class Explorer {
         });
     }
 
-    /**
-     * Method generated by IntelliJ IDEA GUI Designer
-     * >>> IMPORTANT!! <<<
-     * DO NOT edit this method OR call it in your code!
-     *
-     * @noinspection ALL
-     */
-    private void $$$setupUI$$$() {
-        createUIComponents();
-        panel1 = new JPanel();
-        panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.setBackground(new Color(-2848));
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(2, 6, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        colorButton = new JButton();
-        colorButton.setText("Colors");
-        panel2.add(colorButton, new com.intellij.uiDesigner.core.GridConstraints(1, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        keywordFilter = new JTextField();
-        keywordFilter.setToolTipText("KKKKK");
-        panel2.add(keywordFilter, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
-        panel2.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_VERTICAL, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 1, false));
-        deleteIdButton = new JButton();
-        deleteIdButton.setText("Delete");
-        panel2.add(deleteIdButton, new com.intellij.uiDesigner.core.GridConstraints(1, 4, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        add = new JButton();
-        add.setText("Add");
-        panel2.add(add, new com.intellij.uiDesigner.core.GridConstraints(1, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBox1.setAutoscrolls(true);
-        comboBox1.setEditable(true);
-        comboBox1.setFocusCycleRoot(true);
-        comboBox1.setMaximumRowCount(30);
-        panel2.add(comboBox1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        statsButton = new JButton();
-        statsButton.setText("Stats");
-        panel2.add(statsButton, new com.intellij.uiDesigner.core.GridConstraints(1, 5, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        scrollPane1 = new JScrollPane();
-        scrollPane1.setHorizontalScrollBarPolicy(32);
-        scrollPane1.setVerticalScrollBarPolicy(22);
-        panel1.add(scrollPane1, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 3, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        table1.setAutoResizeMode(0);
-        scrollPane1.setViewportView(table1);
-        final JScrollPane scrollPane2 = new JScrollPane();
-        panel1.add(scrollPane2, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, 1, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(180, -1), new Dimension(180, -1), new Dimension(200, -1), 0, false));
-        list1 = new JList();
-        list1.setBackground(new Color(-8591));
-        final DefaultListModel defaultListModel1 = new DefaultListModel();
-        list1.setModel(defaultListModel1);
-        scrollPane2.setViewportView(list1);
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    public JComponent $$$getRootComponent$$$() {
-        return panel1;
-    }
-
     public void setModelRowTable(Object[] de) {
         model.addRow(de);
         table1.revalidate();
@@ -870,11 +926,13 @@ public class Explorer {
         ArrayList<String> products = new ArrayList<>();
         List<Double> topResults = new ArrayList<>();
         List<Double> firstNelementsList = null;
+        ArrayList<KeywordModel> keywordModels = new ArrayList<KeywordModel>();
 
-        public ColorRenderer(ArrayList<Double> values, ArrayList<String> products) {
+        public ColorRenderer(ArrayList<Double> values, ArrayList<String> products, ArrayList<KeywordModel> keywordModels) {
             this.values = values;
             this.products = products;
             setOpaque(true);
+            this.keywordModels = keywordModels;
             for (Double s : values) {
                 try {
                     topResults.add(s);
@@ -890,6 +948,8 @@ public class Explorer {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
         }
 
         @Override
@@ -911,21 +971,56 @@ public class Explorer {
                         }
                     }
                     if (value.toString().contains("New Category")) {
-                        this.setBackground(screen.ColorUtils.getColorFromName("Green"));
                         this.setForeground(Color.WHITE);
                     }
                 } catch (Exception e) {
                     //   e.printStackTrace();
                 }
             }
+            double totalSum = 0;
+            double categorySum = 0;
+            String category = products.get(index);
+
+            for (KeywordModel km : keywordModels) {
+//                if (km.getWhat_category().toLowerCase().equals("smell")) {
+//                    System.out.println(km.frequency_1 + " >> " + km.frequency_2 + " >> " + km.getWhat_category());
+//                }
+            }
+
+            for (KeywordModel m : keywordModels) {
+                totalSum = totalSum + m.frequency_1 + m.frequency_2 + m.frequency_3 + m.frequency_4;
+                if (category.toLowerCase().equals(m.what_category_1.toLowerCase()) && m.what_category_1.length() > 0) {
+                    categorySum = categorySum + m.frequency_1;
+                }
+
+                if (category.toLowerCase().equals(m.what_category_2.toLowerCase()) && m.what_category_2.length() > 0) {
+                    categorySum = categorySum + m.frequency_2;
+                }
+
+                if (category.toLowerCase().equals(m.what_category_3.toLowerCase()) && m.what_category_3.length() > 0) {
+                    categorySum = categorySum + m.frequency_3;
+                }
+                if (category.toLowerCase().equals(m.what_category_4.toLowerCase()) && m.what_category_4.length() > 0) {
+                    categorySum = categorySum + m.frequency_4;
+                }
+
+            }
+            System.out.println("category sum is " + categorySum);
+
             try {
                 this.setText(products.get(index));
-                if (firstNelementsList.contains(values.get(index)) && !Double.isNaN(values.get(index))) {
-                    this.setText(df1.format(values.get(index)) + "% <<< " + products.get(index));
+                double percent = 0.0;
+                if (categorySum > 0) {
+                    percent = (categorySum / totalSum) * 100;
+//                    if (firstNelementsList.contains(values.get(index)) && !Double.isNaN(values.get(index))) {
+                    this.setText(df1.format(percent) + "% <<< " + products.get(index));
+//                    } else {
+//                        if (!Double.isNaN(values.get(index))) {
+//                            this.setText(df1.format(values.get(index)) + "% " + products.get(index));
+//                        }
+//                    }
                 } else {
-                    if (!Double.isNaN(values.get(index))) {
-                        this.setText(df1.format(values.get(index)) + "% " + products.get(index));
-                    }
+                    this.setText(0 + "% " + products.get(index));
                 }
             } catch (Exception e) {
             }
@@ -933,4 +1028,6 @@ public class Explorer {
         }
     }
 }
+
+
 

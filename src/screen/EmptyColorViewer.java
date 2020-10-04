@@ -68,37 +68,37 @@ public class EmptyColorViewer {
                 Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 //  comp.setForeground(Color.BLUE);
                 comp.setForeground(Color.BLACK);
-                comp.setBackground(Color.WHITE);
-                try {
-                    String[] differences = ((String) value).split(" ");
-                    ArrayList<String> t = new ArrayList<>();
-                    for (screen.Colourful c : colors) {
-                        t.add(c.keyword);
-
-                        if (containss((String) value, c.keyword, c.categoryCondition)) {
-                            Color dd = null;
-                            Color cx = null;
-                            switch (column) {
-                                case 2:
-                                    try {
-                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
-                                        if (cx != null) comp.setForeground(cx);
-                                        Color dd2 = Color.decode("#" + Explorer.getHexColorName((String) value));
-                                        if (dd2 != null) comp.setBackground(dd2);
-                                    } catch (Exception e) {
-                                    }
-                                    return comp;
-                                default:
-                                    comp.setForeground(Color.BLACK);
-                                    comp.setBackground(Color.WHITE);
-                                    return comp;
-                            }
-                        }
-                    }
-                    return comp;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //     comp.setBackground(Color.WHITE);
+//                try {
+//                    String[] differences = ((String) value).split(" ");
+//                    ArrayList<String> t = new ArrayList<>();
+//                    for (screen.Colourful c : colors) {
+//                        t.add(c.keyword);
+//
+//                        if (containss((String) value, c.keyword, c.categoryCondition)) {
+//                            Color dd = null;
+//                            Color cx = null;
+//                            switch (column) {
+//                                case 2:
+//                                    try {
+//                                        cx = Color.decode("#" + getTextColorName((String) value)); //getTextColorName((String) value));
+//                                        if (cx != null) comp.setForeground(cx);
+//                                        Color dd2 = Color.decode("#" + Explorer.getHexColorName((String) value));
+//                                        if (dd2 != null) comp.setBackground(dd2);
+//                                    } catch (Exception e) {
+//                                    }
+//                                    return comp;
+//                                default:
+//                                    comp.setForeground(Color.BLACK);
+//                                    comp.setBackground(Color.WHITE);
+//                                    return comp;
+//                            }
+//                        }
+//                    }
+//                    return comp;
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
                 return comp;
             }
         });

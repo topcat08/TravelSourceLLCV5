@@ -61,7 +61,7 @@ public class Stats {
                 if (colors.get(i).categories != null) {
                     if (!listModel.contains(colors.get(i).categories)) {
                         //adding new columns & categ.
-                        HashMap<String, Double> eval = getKeywordSumV3(productsList.get(z), colors.get(i).categoryCondition);
+                        HashMap<String, Double> eval = getKeywordSumV3(productsList.get(z), colors.get(i).getCategoryCondition());
 
                         listModel.addElement(colors.get(i).categories);
                         //calculating new value of formatting
@@ -155,7 +155,7 @@ public class Stats {
                 Colourful data = new Colourful();
                 data.idKeywordTable = rsd.getInt("idColor");
                 data.categories = rsd.getString("Category");
-                data.color = rsd.getString("Color");
+                data.color = rsd.getString("HexColor");
                 data.hex = rsd.getString("HexColor");
                 data.textHex = rsd.getString("TextColor");
                 data.keyword = rsd.getString("keyword");
